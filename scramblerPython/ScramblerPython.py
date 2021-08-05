@@ -17,7 +17,7 @@ def openEncryptedMassage(fileName):
 def tofileDecrypted(func, fileName, code, key, message, boolKey):
     decryptedMessage = open(fileName, "w")
     decryptedMessage.write(code)
-    decryptedMessage.write(key)
+    decryptedMessage.write(str(key) + "\n")
     if (boolKey):
         decryptedMessage.write(func(message, key))
     else:
@@ -27,12 +27,11 @@ def tofileDecrypted(func, fileName, code, key, message, boolKey):
 def tofileEncrypted(func, fileName, code, key, message, boolKey):
     encryptedMessage = open(fileName, "w+")
     encryptedMessage.write(code)
-    encryptedMessage.write(key)
+    encryptedMessage.write(str(key) + "\n")
     if (boolKey):
         encryptedMessage.write(func(message, key))
     else:
         encryptedMessage.write(func(message))
-    encryptedMessage.write(func(message))
     encryptedMessage.close()
 
 def checkFileFomat(filename, codeNames):
@@ -45,7 +44,7 @@ def checkFileFomat(filename, codeNames):
     fileMessage = open(fileName, "r")
     lines = fileMessage.readlines()
     fileMessage.close()
-    if(((lines[0] - "\n").lower() not in codeNames) or ((lines[0] - "\n")[0:4] != "Key: ")):
+    if((lines[0] - "\n").lower() not in codeNames):
         return False
     else:
         return True
@@ -93,7 +92,7 @@ if (mode == "1" or mode == "encrypt"):
             encryptedMessage = Atbash.encryptDecrypt(message)
             print(encryptedMessage)
         if (codeName == "3" or codeName == "caesar" or codeName == "caesar cipher"):
-            key = str(input("Enter key:\n"))
+            key = int(input("Enter key:\n"))
             encryptedMessage = Caesar.encrypt(message, key)
             print(encryptedMessage)
 
@@ -104,12 +103,12 @@ if (mode == "1" or mode == "encrypt"):
             message = str(input("Enter message:\n"))
 
         if (codeName == "1" or codeName == "morse" or codeName == "morse code"):
-            tofileEncrypted(Morse.encrypt, "MorseEncrypted.txt", "Morse Code\n", "Key: -\n", message, False)
+            tofileEncrypted(Morse.encrypt, "MorseEncrypted.txt", "Morse Code\n", 0, message, False)
         if (codeName == "2" or codeName == "atbash" or codeName == "atbash cipher"):
-            tofileEncrypted(Atbash.encryptDecrypt, "AtbashEncrypted.txt", "Atbash cipher\n", "Key: -\n", message, False)
+            tofileEncrypted(Atbash.encryptDecrypt, "AtbashEncrypted.txt", "Atbash cipher\n", 0, message, False)
         if (codeName == "3" or codeName == "caesar" or codeName == "caesar cipher"):
-            key = str(input("Enter key:\n"))
-            tofileEncrypted(Caesar.encrypt, "CaesarEncrypted.txt", "Caesar cipher\n", "Key: " + key + "\n", message, True)
+            key = int(input("Enter key:\n"))
+            tofileEncrypted(Caesar.encrypt, "CaesarEncrypted.txt", "Caesar cipher\n", key, message, True)
 
 #decryption block
 if (mode == "2" or mode == "decrypt"):
@@ -123,22 +122,19 @@ if (mode == "2" or mode == "decrypt"):
             decryptedMessage = Atbash.encryptDecrypt(message)
             print(decryptedMessage)
         if (codeName == "3" or codeName == "caesar" or codeName == "caesar cipher"):
-            key = str(input("Enter key:\n"))
+            key = int(input("Enter key:\n"))
             decryptedMessage = Caesar.decrypt(message, key)
             print(decryptedMessage)
 
     if (format == "2" or format == "file"):
         fileName = str(input("Enter file name:\n"))
-        while (not checkFileFomat(fileName, codeNames)):
-            print("Wrong file format, please re-enter file")
-            fileName = str(input("Enter file name:\n"))
         lines = openEncryptedMassage(fileName)
 
         if (lines[0]  == "Morse Code\n"):
-            tofileDecrypted(Morse.decrypt, "MorseDecrypted.txt", "Morse Code\n", "Key: -\n", lines[2], False)
+            tofileDecrypted(Morse.decrypt, "MorseDecrypted.txt", "Morse Code\n", 0, lines[2], False)
         if (lines[0]  == "Atbash cipher\n"):
-            tofileDecrypted(Atbash.encryptDecrypt, "AtbashDecrypted.txt", "Atbash cipher\n", "Key: -\n", lines[2], False)
+            tofileDecrypted(Atbash.encryptDecrypt, "AtbashDecrypted.txt", "Atbash cipher\n", 0, lines[2], False)
         if (lines[0]  == "Caesar cipher\n"):
-            tofileDecrypted(Caesar.decrypt, "CaesarDecrypted.txt", "Caesar cipher\n", "Key: -\n", lines[2], True)
+            tofileDecrypted(Caesar.decrypt, "CaesarDecrypted.txt", "Caesar cipher\n", int(lines[1]), lines[2], True)
         
 
